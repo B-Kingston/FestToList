@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestToList</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f4f8;
+            overflow: hidden;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .file-input-wrapper::before {
+            content: 'Choose Festival Lineup';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e0e7ff;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            color: #3498db;
+            cursor: pointer;
+        }
+        .file-input-wrapper input[type="file"] {
+            opacity: 0;
+            width: 100%;
+            height: 100px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: -100% 0;
+            }
+            100% {
+                background-position: 100% 0;
+            }
+        }
+        .rainbow-shimmer {
+            background-image: linear-gradient(
+                to right, 
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff,
+                #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff
+            );
+            background-size: 200% auto;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+            animation: shimmer 2s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="floaty-container" style="transform: translate(0px, 0px);padding-bottom: 100px;">
+        <h1 id="title">FestToList</h1>
+        
+        <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
+            <div class="file-input-wrapper">
+                <input type="file" name="file" id="file" accept="image/*,.pdf" required />
+            </div>
+            <div>
+                <button type="submit">Convert Lineup</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const container = document.getElementById('floaty-container');
+        const form = document.getElementById('upload-form');
+        const title = document.getElementById('title');
+        const maxDistance = 300; // Maximum distance for the effect
+        const maxMovement = 30; // Maximum pixels to move
+
+        document.addEventListener('mousemove', (e) => {
+            const containerRect = container.getBoundingClientRect();
+            const formRect = form.getBoundingClientRect();
+
+            // Check if the mouse is inside the form
+            if (e.clientX >= formRect.left && e.clientX <= formRect.right &&
+                e.clientY >= formRect.top && e.clientY <= formRect.bottom) {
+                container.style.transform = 'translate(0, 0)';
+                return;
+            }
+
+            const centerX = containerRect.left + containerRect.width / 2;
+            const centerY = containerRect.top + containerRect.height / 2;
+
+            const distanceX = e.clientX - centerX;
+            const distanceY = e.clientY - centerY;
+            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+            if (distance < maxDistance) {
+                const factor = (maxDistance - distance) / maxDistance;
+                const moveX = -distanceX * factor * (maxMovement / maxDistance);
+                const moveY = -distanceY * factor * (maxMovement / maxDistance);
+
+                container.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            } else {
+                container.style.transform = 'translate(0, 0)';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); // Prevent form submission for this example
+            title.classList.add('rainbow-shimmer');
+            setTimeout(() => {
+                title.classList.remove('rainbow-shimmer');
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
