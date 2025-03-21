@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"net/http"
 )
@@ -22,18 +23,30 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("Uploaded File: %+v\n", handler.Filename)
 	fmt.Printf("File Size: %+v\n", handler.Size)
 	fmt.Printf("MIME Header: %+v\n", handler.Header)
-
-	fileBytes, err := ioutil.ReadAll(file)
+	var fileBytes []byte
+	fileBytes, err = ioutil.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
 	}
-	// write this byte array to our temporary file
-	tempFile.Write(fileBytes)
-	// return that we have successfully uploaded our file!
 	fmt.Fprintf(w, " Successfully Uploaded File\n")
+	println(fileBytes)
+}
+
+func displayHomePage(w http.ResponseWriter, r *http.Request) {
+	t, err := template.ParseFiles("./static/index.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	test := "test"
+	err = t.Execute(w, test)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func setupRoutes() {
 	http.HandleFunc("/upload", uploadFile)
+	http.HandleFunc("/home", displayHomePage)
 	http.ListenAndServe(":8080", nil)
 }
