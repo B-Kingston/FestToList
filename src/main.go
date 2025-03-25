@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"time"
+)
 
 // "io"
 // "html/template"
@@ -16,7 +18,8 @@ func main() {
 	// http.HandleFunc("/", h1)
 	// log.Fatal(http.ListenAndServe(":8000", nil))
 	db := initDbConn()
-	fmt.Sprint(db)
+	time_now := time.Now()
+	insert(time_now.String(), "fest2list", "submitted_datetime", db)
 	// insert(db)
-	setupRoutes()
+	//setupRoutes()
 }
